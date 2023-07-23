@@ -1,0 +1,70 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+
+      - name: Install dependencies
+        run: yarn install
+        working-directory: ./express-ts-application
+
+      - name: Code Linting and Unit Testing
+        run: |
+          yarn lint
+          yarn test
+        working-directory: ./express-ts-application
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+        working-directory: ./django-application
+
+      - name: Django Unit Testing
+        run: python manage.py test
+        working-directory: ./django-application
+
+      - name: Build Docker Image for Express Application
+        env:
+          IMAGE_TAG: latest
+        run: |
+          docker build -t your-docker-repo/express-ts-application:${IMAGE_TAG} ./express-ts-application
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker push your-docker-repo/express-ts-application:${IMAGE_TAG}
+
+      - name: Build Docker Image for Django Application
+        env:
+          IMAGE_TAG: latest
+        run: |
+          docker build -t your-docker-repo/django-application:${IMAGE_TAG} ./django-application
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker push your-docker-repo/django-application:${IMAGE_TAG}
+
+      - name: Deploy to Kubernetes using Helm
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+          IMAGE_TAG: latest
+        run: |
+          helm upgrade --install express-app ./helm-charts/express-auth \
+            --set image.tag=${IMAGE_TAG} \
+            --set service.type=NodePort
+          helm upgrade --install django-app ./helm-charts/django-analytics \
+            --set image.tag=${IMAGE_TAG} \
+            --set service.type=NodePort
