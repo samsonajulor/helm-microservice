@@ -94,3 +94,8 @@ kubectl get svc helm-auth
 ```
 
 You can access the application by navigating to `http://<node-ip>:<node-port>` in your browser, where `<node-ip>` is the IP of one of your cluster nodes, and `<node-port>` is the port you obtained from the `kubectl get svc` command.
+
+# Production Deployment
+- The CI-CD pipeline is active on push to the main branch. It replicates the local deployment.
+
+- terraform codes, logging and monitoring will be made available before the deadline.
