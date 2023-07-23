@@ -55,8 +55,7 @@ a. Install Helm:
 Follow the installation instructions provided on the Helm website for your specific operating system: https://helm.sh/docs/intro/install/
 
 ## Dockerize the application and push to docker hub
-
-
+run `bash ./deploy.sh` in the root of the repository to deploy.
 ## deploy helm charts
 
 Step 4: Deploy the Helm chart
