@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: yarn
-        working-directory: ../../authentication_service
+        working-directory: authentication_service
 
       # - name: Code Linting and Unit Testing
       #   run: |
@@ -35,7 +35,7 @@ jobs:
 
       - name: Install Python dependencies
         run: pip install -r requirements.txt
-        working-directory: ../../analytics_service/analytics_service
+        working-directory: analytics_service/analytics_service
 
       # - name: Django Unit Testing
       #   run: python manage.py test
