@@ -16,9 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from analyzer.views import metrics_view
+from analyzer import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('metrics/', metrics_view, name='metrics'),
+    path('metrics/', views.metrics_view, name='metrics'),
 ]
